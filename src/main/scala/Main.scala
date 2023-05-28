@@ -1,8 +1,8 @@
 @main def hello: Unit =
-  println(pudu)
+  println(puduImg)
 
 /* https://www.asciiart.eu/animals/deer */
-val pudu = """
+val puduImg = """
          /',  _
        _(  ;-'.'
   _,-'~     '".
