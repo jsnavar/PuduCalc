@@ -58,10 +58,15 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
   (expr ::= (uplus, expr)) { (_, x) => x }
   (expr ::= (uminus, expr)) { (_, x) => UMinus(x) }
 
+  /* parens */
+  (expr ::= (lpar, expr, rpar)) { _._2 }
+
   /* Binary operators */
   (expr ::= (expr, plus, expr)) { (l,_,r) => Addition(l,r) }
   (expr ::= (expr, minus, expr)) { (l,_,r) => Subtraction(l,r) }
   (expr ::= (expr, times, expr)) { (l,_,r) => Multiplication(l,r) }
   (expr ::= (expr, div, expr)) { (l,_,r) => Division(l,r) }
   (expr ::= (expr, caret, expr)) { (l,_,r) => Pow(l,r) }
+
+  /* function call */
   (expr ::= (id, lpar, exprSeq, rpar)) { (fn,_,args,_) => FuncCall(fn.name, args.seq) }
