@@ -1,7 +1,7 @@
-
+package puducalc
 
 /** Tokens for PuduCalc without positions */
-enum CalcToken:
+enum Token:
   case LPar()
   case RPar()
   case Literal(value: Double)
