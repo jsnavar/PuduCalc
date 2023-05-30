@@ -3,8 +3,6 @@ import puducalc._
 import pudu.parser.generator._
 
 class EvalTest extends munit.FunSuite {
-  import scala.collection.mutable.HashMap
-
   val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
 
   def evalCtx(ctx: scala.collection.Map[String, Double])(str: String): Double =

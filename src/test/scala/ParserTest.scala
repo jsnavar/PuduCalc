@@ -3,7 +3,7 @@ import puducalc._
 import pudu.parser.generator._
 
 class ParserTest extends munit.FunSuite {
-  val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer) // ...
+  val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
 
   def nodeTest(str: String, expected: => CalcAST) =
     val result = strParser(str)
