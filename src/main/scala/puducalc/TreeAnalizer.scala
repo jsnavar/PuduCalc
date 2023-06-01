@@ -9,7 +9,10 @@ object TreeAnalizer:
       check(expr) ++
       (if Predefined.constants.contains(id) then Set(CannotRedefineId(id))
       else Set.empty)
-    case FunDef(id,args,expr) => Set.empty
+    case FunDef(id,args,expr) =>
+      check(expr)(using ctx.withPairs(args.map(_ -> 0d).toMap)) ++
+      (if Predefined.functions.contains(id) then Set(CannotRedefineId(id))
+      else Set.empty)
 
     case IdSeq(_) => throw Exception()
     case ExprSeq(_) => throw Exception()

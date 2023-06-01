@@ -9,8 +9,6 @@ import pudu.parser.generator._
 
   val ctx = Context.empty
 
-  val evaluate = TreeEvaluator(ctx).eval
-
   val quitStr = ".quit"
   var lineNo = 0
 
@@ -30,11 +28,15 @@ import pudu.parser.generator._
   for tree <- mainIterator do
     tree match
       case Assignment(v, expr) =>
-        val res = evaluate(expr)
+        val res = TreeEvaluator.eval(expr)(using ctx)
         ctx.addVar(v, res)
         println(s"Assigned '$v' := $res")
       case t: ExprTree =>
-        val res = evaluate(t)
+        val res = TreeEvaluator.eval(t)(using ctx)
         lineNo += 1
         println(s"Result($lineNo) is $res")
+      case fdef @ FunDef(fn,args,expr) =>
+        ctx.addFn(fn, fdef)
+        val argsStr = args.mkString(", ")
+        println(s"Defined function $fn as ($argsStr) => $expr")
       case _ => ()

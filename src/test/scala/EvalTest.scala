@@ -6,9 +6,8 @@ class EvalTest extends munit.FunSuite {
   val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
 
   def evalCtx(ctx: Context)(str: String): Double =
-    val eval = TreeEvaluator(ctx).eval
     strParser(str).map {
-      case t: ExprTree => eval(t)
+      case t: ExprTree => TreeEvaluator.eval(t)(using ctx)
       case _ => throw Exception()
     }.getOrElse(throw Exception())
 

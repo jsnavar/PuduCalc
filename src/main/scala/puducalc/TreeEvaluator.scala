@@ -1,11 +1,16 @@
 package puducalc
 
-class TreeEvaluator(ctx: Context):
-  private def evalFuncCall(fn: String, args: Seq[Double]): Double =
+object TreeEvaluator:
+  private def evalFuncCall(fn: String, args: Seq[Double])(using ctx: Context): Double =
     if Predefined.functions.contains(fn) then Predefined.evalFn(fn, args)
+    else if ctx.functions.contains(fn) then
+      val fdef = ctx.functions(fn)
+      val binded = fdef.args.zip(args).toMap
+      eval(fdef.expr)(using ctx.withPairs(binded))
     else throw FunctionNotFoundException(fn)
 
-  def eval: ExprTree => Double =
+
+  def eval(tree: ExprTree)(using ctx: Context): Double = tree match
     case ConstDouble(d) => d
     case Var(id) =>
       if Predefined.constants.contains(id) then Predefined.constantValue(id)
