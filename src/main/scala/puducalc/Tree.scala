@@ -15,3 +15,6 @@ case class Division(left: ExprTree, right: ExprTree) extends ExprTree
 case class Pow(left: ExprTree, right: ExprTree) extends ExprTree
 case class FuncCall(fn: String, args: Seq[ExprTree]) extends ExprTree
 case class UMinus(expr: ExprTree) extends ExprTree
+
+
+case class TypedExpr[T <: ExprTree](tree: T, tpe: TypeRepr)

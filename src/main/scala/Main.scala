@@ -14,6 +14,7 @@ import pudu.parser.generator._
   val ctx = HashMap[String, Double]()
 
   val analize = TreeAnalizer(ctx).analize
+  val typeCheck = TreeAnalizer(ctx).typeCheck
   val evaluate = TreeEvaluator(ctx).eval
 
   val quitStr = ".quit"
@@ -31,9 +32,13 @@ import pudu.parser.generator._
       case t: ExprTree => (t, analize(t))
       case _: ExprSeq => throw Exception() }
     .tapEach { case (_, undef) =>
-      if ! undef.isEmpty then
+      if !undef.isEmpty then
         println(s"Undefined variables or functions: $undef") }
     .filter { case (_, undef) => undef.isEmpty }
+    .map { case (tree,_) => (tree, typeCheck(tree)) }
+    .tapEach { case (_, msgs) =>
+      if !msgs.isEmpty then msgs.foreach(println) }
+    .filter { case (_, msgs) => msgs.isEmpty }
     .map { _._1 }
 
   for tree <- mainIterator do

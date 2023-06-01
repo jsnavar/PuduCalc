@@ -25,10 +25,9 @@ object UndefinedIds:
 
 /** Collects all undefined variables and functions */
 class TreeAnalizer(ctx: scala.collection.Map[String, Double]):
-  val functions = Set("sum", "min", "max", "avg")
   def analize: ExprTree => UndefinedIds =
     case ConstDouble(d) => UndefinedIds.empty
-    case Var(id) => if ! ctx.contains(id) then UndefinedIds(Set(id), Set.empty)
+    case Var(id) => if !Predefined.constants.contains(id) && !ctx.contains(id) then UndefinedIds(Set(id), Set.empty)
                     else UndefinedIds.empty
     case Addition(l, r) => analize(l) ++ analize(r)
     case Subtraction(l, r) => analize(l) ++ analize(r)
@@ -38,4 +37,27 @@ class TreeAnalizer(ctx: scala.collection.Map[String, Double]):
     case UMinus(expr) => analize(expr)
     case FuncCall(fn, args) =>
       val argsUndefIds = args.map(analize).reduce(_ ++ _)
-      if !functions.contains(fn) then argsUndefIds.addFn(fn) else argsUndefIds
+      if !Predefined.functions.contains(fn) then argsUndefIds.addFn(fn) else argsUndefIds
+
+  def typeCheck: CalcAST => Set[String] =
+    case Assignment(id,_) => if Predefined.constants.contains(id) then Set(s"Can not redefined constant $id")
+                             else Set.empty
+    case ExprSeq(_) => throw Exception()
+    case ConstDouble(_) => Set.empty
+    case Var(_) => Set.empty
+    case Addition(l, r) => typeCheck(l) ++ typeCheck(r)
+    case Subtraction(l, r) => typeCheck(l) ++ typeCheck(r)
+    case Multiplication(l, r) => typeCheck(l) ++ typeCheck(r)
+    case Division(l, r) => typeCheck(l) ++ typeCheck(r)
+    case Pow(l, r) => typeCheck(l) ++ typeCheck(r)
+    case UMinus(expr) => typeCheck(expr)
+    case FuncCall(fn, args) =>
+      Predefined.functions(fn) match
+        case TypeRepr.Num => throw Exception()
+        case TypeRepr.VarFunction => Set.empty
+        case TypeRepr.Function(defArgs, ret) =>
+          if args.size < defArgs.size then
+            Set(s"Too few arguments for function $fn. Expected ${defArgs.size} but found ${args.size}")
+          else if args.size > defArgs.size then
+            Set(s"Too many arguments for function $fn. Expected ${defArgs.size} but found ${args.size}")
+          else Set.empty

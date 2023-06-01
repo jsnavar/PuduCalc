@@ -7,12 +7,17 @@ class TreeEvaluator(ctx: scala.collection.Map[String, Double]):
       case "max" => args.max
       case "min" => args.min
       case "avg" => args.sum / args.size
+      case "sqrt" => math.sqrt(args.head)
+      case "log2" => math.log(args.head) / math.log(2d)
+      case "exp" => math.exp(args.head)
       case s => throw FunctionNotFoundException(s)
 
   def eval: ExprTree => Double =
     case ConstDouble(d) => d
-    case Var(id) =>
-      ctx.getOrElse(id, throw VarNotFoundException(id))
+    case Var(id) => id match
+      case "Pi" => math.Pi
+      case "E" => math.E
+      case _ => ctx.getOrElse(id, throw VarNotFoundException(id))
     case Addition(l, r) => eval(l) + eval(r)
     case Subtraction(l, r) => eval(l) - eval(r)
     case Multiplication(l, r) => eval(l) * eval(r)

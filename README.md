@@ -26,7 +26,7 @@ Precedence()
 ```
 
 ### Predefined functions
-PuduCalc supports four functions: `sum`, `min`, `max` and `avg`.
+PuduCalc supports functions: `sum`, `min`, `max`, `avg`, `log2`, `exp` and `sqrt`
 
 ### Error reporting
-It reports syntax errors, unrecognized characters (lexical error), and the usage of undefined functions or variables.
+It reports syntax errors, unrecognized characters (lexical error), the usage of undefined functions or variables, and incorrect number of arguments.
