@@ -5,6 +5,8 @@ sealed trait CalcAST
 sealed trait ExprTree extends CalcAST
 case class Assignment(id: String, expr: ExprTree) extends CalcAST
 case class ExprSeq(seq: Seq[ExprTree]) extends CalcAST
+case class IdSeq(seq: Seq[String]) extends CalcAST
+case class FunDef(id: String, args: Seq[String], expr: ExprTree) extends CalcAST
 
 case class ConstDouble(lit: Double) extends ExprTree
 case class Var(id: String) extends ExprTree

@@ -5,25 +5,28 @@ import pudu.parser.generator._
 class TreeAnalizerTest extends munit.FunSuite {
   val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
 
-  def analizeCtx(ctx: scala.collection.Map[String, Double])(str: String): UndefinedIds =
-    val analize = TreeAnalizer(ctx).analize
+  def analizeCtx(ctx: Context)(str: String): Set[ErrorMsg] =
     strParser(str).map {
-      case t: ExprTree => analize(t)
+      case t: ExprTree => TreeAnalizer.check(t)(using ctx)
       case _ => throw Exception()
     }.getOrElse(throw Exception())
 
   test("no ids") {
-    assertEquals(analizeCtx(Map.empty)("2 * 3"), UndefinedIds.empty)
+    assertEquals(analizeCtx(Context.empty)("2 * 3"), Set.empty)
   }
 
   test("var") {
-    val ctx = Map("x" -> 3d)
-    assertEquals(analizeCtx(ctx)("x * y"), UndefinedIds(Set("y"), Set.empty))
-    assertEquals(analizeCtx(ctx)("x + avg(2,3,x,t,3^z)"), UndefinedIds(Set("t", "z"), Set.empty))
+    import ErrorMsg._
+
+    val ctx = Context.empty.addVar("x", 3d)
+    assertEquals(analizeCtx(ctx)("x * y"), Set(UndefinedVar("y")))
+    assertEquals(analizeCtx(ctx)("x + avg(2,3,x,t,3^z)"), Set(UndefinedVar("t"), UndefinedVar("z")))
   }
 
   test("fn") {
-    val ctx = Map("x" -> 3d)
-    assertEquals(analizeCtx(ctx)("x(x) + 3"), UndefinedIds(Set.empty, Set("x")))
+    import ErrorMsg._
+
+    val ctx = Context.empty.addVar("x", 3d)
+    assertEquals(analizeCtx(ctx)("x(x) + 3"), Set(UndefinedFunction("x")))
   }
 }

@@ -1,23 +1,15 @@
 package puducalc
 
-class TreeEvaluator(ctx: scala.collection.Map[String, Double]):
+class TreeEvaluator(ctx: Context):
   private def evalFuncCall(fn: String, args: Seq[Double]): Double =
-    fn match
-      case "sum" => args.sum
-      case "max" => args.max
-      case "min" => args.min
-      case "avg" => args.sum / args.size
-      case "sqrt" => math.sqrt(args.head)
-      case "log2" => math.log(args.head) / math.log(2d)
-      case "exp" => math.exp(args.head)
-      case s => throw FunctionNotFoundException(s)
+    if Predefined.functions.contains(fn) then Predefined.evalFn(fn, args)
+    else throw FunctionNotFoundException(fn)
 
   def eval: ExprTree => Double =
     case ConstDouble(d) => d
-    case Var(id) => id match
-      case "Pi" => math.Pi
-      case "E" => math.E
-      case _ => ctx.getOrElse(id, throw VarNotFoundException(id))
+    case Var(id) =>
+      if Predefined.constants.contains(id) then Predefined.constantValue(id)
+      else ctx.vars.getOrElse(id, throw VarNotFoundException(id))
     case Addition(l, r) => eval(l) + eval(r)
     case Subtraction(l, r) => eval(l) - eval(r)
     case Multiplication(l, r) => eval(l) * eval(r)

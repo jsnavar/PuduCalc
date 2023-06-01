@@ -5,7 +5,7 @@ import pudu.parser.generator._
 class EvalTest extends munit.FunSuite {
   val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
 
-  def evalCtx(ctx: scala.collection.Map[String, Double])(str: String): Double =
+  def evalCtx(ctx: Context)(str: String): Double =
     val eval = TreeEvaluator(ctx).eval
     strParser(str).map {
       case t: ExprTree => eval(t)
@@ -13,7 +13,7 @@ class EvalTest extends munit.FunSuite {
     }.getOrElse(throw Exception())
 
   test("without variables") {
-    val eval = evalCtx(Map.empty)
+    val eval = evalCtx(Context.empty)
 
     assertEquals(eval("128"), 128d)
     assertEquals(eval("2 + 3"), 5d)
@@ -31,7 +31,7 @@ class EvalTest extends munit.FunSuite {
   }
 
   test("variables") {
-    val ctx = Map("x" -> 10d, "y" -> 20d)
+    val ctx = Context.empty.addVar("x", 10d).addVar("y", 20d)
     val eval = evalCtx(ctx)
 
     assertEquals(eval(" x + 4 - y"), -6d)
@@ -39,13 +39,13 @@ class EvalTest extends munit.FunSuite {
 
   test("var not found") {
     intercept[VarNotFoundException] {
-      evalCtx(Map.empty)("x")
+      evalCtx(Context.empty)("x")
     }
   }
 
   test("fn not found") {
     intercept[FunctionNotFoundException] {
-      evalCtx(Map.empty)("x(2)")
+      evalCtx(Context.empty)("x(2)")
     }
   }
 

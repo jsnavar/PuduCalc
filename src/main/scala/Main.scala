@@ -1,8 +1,4 @@
-import scala.collection.mutable.HashMap
-
 import scala.io.StdIn
-import scala.util.{Try, Success, Failure}
-
 import puducalc._
 
 import pudu.parser.generator._
@@ -11,10 +7,8 @@ import pudu.parser.generator._
   val parser = SLRParserGenerator(ParserSpec).parser
   val strParser = parser.compose(Lexer.lexer)
 
-  val ctx = HashMap[String, Double]()
+  val ctx = Context.empty
 
-  val analize = TreeAnalizer(ctx).analize
-  val typeCheck = TreeAnalizer(ctx).typeCheck
   val evaluate = TreeEvaluator(ctx).eval
 
   val quitStr = ".quit"
@@ -26,16 +20,8 @@ import pudu.parser.generator._
     .tapEach {
       case Left(err) => println(s"Error: ${err.msg}")
       case _ => () }
-    .collect { case Right(tree) => tree }
-    .map {
-      case t @ Assignment(id, expr) => (t, analize(expr))
-      case t: ExprTree => (t, analize(t))
-      case _: ExprSeq => throw Exception() }
-    .tapEach { case (_, undef) =>
-      if !undef.isEmpty then
-        println(s"Undefined variables or functions: $undef") }
-    .filter { case (_, undef) => undef.isEmpty }
-    .map { case (tree,_) => (tree, typeCheck(tree)) }
+    .collect { case Right(tree) =>
+                 (tree, TreeAnalizer.check(tree)(using ctx)) }
     .tapEach { case (_, msgs) =>
       if !msgs.isEmpty then msgs.foreach(println) }
     .filter { case (_, msgs) => msgs.isEmpty }
@@ -45,7 +31,7 @@ import pudu.parser.generator._
     tree match
       case Assignment(v, expr) =>
         val res = evaluate(expr)
-        ctx += v -> res
+        ctx.addVar(v, res)
         println(s"Assigned '$v' := $res")
       case t: ExprTree =>
         val res = evaluate(t)
