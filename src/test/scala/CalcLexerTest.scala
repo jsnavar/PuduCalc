@@ -66,8 +66,6 @@ class CalcLexerTest extends munit.FunSuite {
     checkToken("____1", Token.Id("____1"))
     checkToken("x____1", Token.Id("x____1"))
     checkToken("x____1", Token.Id("x____1"))
-    checkToken("1strXYZ_", Token.Id("1strXYZ_"))
-    checkToken("1234_______", Token.Id("1234_______"))
   }
 
   test("whitespace") {

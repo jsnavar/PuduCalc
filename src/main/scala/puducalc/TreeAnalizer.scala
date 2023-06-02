@@ -10,7 +10,7 @@ object TreeAnalizer:
       (if Predefined.constants.contains(id) then Set(CannotRedefineId(id))
       else Set.empty)
     case FunDef(id,args,expr) =>
-      check(expr)(using ctx.withPairs(args.map(_ -> 0d).toMap)) ++
+      check(expr)(using ctx.withPairs(args.map(_ -> Double.NaN).toMap)) ++
       (if Predefined.functions.contains(id) then Set(CannotRedefineId(id))
       else Set.empty)
 
@@ -40,7 +40,6 @@ object TreeAnalizer:
           if ctx.functions.contains(fn) then
             val expected = ctx.functions(fn).args.size
             val found = args.size
-            if expected != found then Set(WrongNumberOfArgs(fn, expected, found))
-            else Set.empty
+            if expected != found then Set(WrongNumberOfArgs(fn, expected, found)) else Set.empty
           else Set(UndefinedFunction(fn))
       argsErrors ++ numArgs

@@ -51,7 +51,7 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
 
   /* Expr seq (non empty by design) */
   (exprSeq ::= expr) { x => ExprSeq(Seq(x)) }
-  (exprSeq ::= (expr, comma, exprSeq)) { case (x,_,ExprSeq(seq)) => ExprSeq(x +: seq) }
+  (exprSeq ::= (expr, comma, exprSeq)) { (head,_,tail) => ExprSeq(head +: tail.seq) }
 
   /* Assignment */
   (assignment ::= (id, assign, expr)) { (id, _, expr) => Assignment(id.name, expr) }
