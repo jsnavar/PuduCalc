@@ -10,9 +10,13 @@ object TreeAnalizer:
       (if Predefined.constants.contains(id) then Set(CannotRedefineId(id))
       else Set.empty)
     case FunDef(id,args,expr) =>
-      check(expr)(using ctx.withPairs(args.map(_ -> Double.NaN).toMap)) ++
-      (if Predefined.functions.contains(id) then Set(CannotRedefineId(id))
-      else Set.empty)
+      val argsErrors = check(expr)(using ctx.withPairs(args.map(_ -> Double.NaN).toMap))
+      val predef = if Predefined.functions.contains(id) then Set(CannotRedefineId(id))
+                   else Set.empty
+      val repeatedParams = args.diff(args.distinct) match
+        case Nil => Set.empty
+        case s => Set(RepeatedParameters(s))
+      argsErrors ++ predef ++ repeatedParams
 
     case IdSeq(_) => throw Exception()
     case ExprSeq(_) => throw Exception()

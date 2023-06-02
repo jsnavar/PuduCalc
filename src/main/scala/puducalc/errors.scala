@@ -19,3 +19,7 @@ object ErrorMsg:
       else if found > expected then
         s"Too many arguments for function $fn. Expected $expected but found ${found}"
       else throw Exception()
+
+  case class RepeatedParameters(s: Iterable[String]) extends ErrorMsg:
+    override def toString =
+      s"Function has repeated parameters: ${s.mkString(", ")}"
