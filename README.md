@@ -4,7 +4,7 @@ This project is just an example of how to use [Pudu](https://github.com/jsnavar/
 
 ### Grammar
 
-PuduCalc is a line oriented calculator operating with `Double`s, where each line is either an expression to be evaluated, a variable assignment, or a function definition:
+PuduCalc is a line oriented calculator operating with Doubles, where each line is an expression to be evaluated, a variable assignment, or a function definition:
 
 ```
       stmt ::= assignment | expr | defun
@@ -28,10 +28,24 @@ Precedence()
 ```
 
 ### Predefined functions and constants
-PuduCalc includes the functions: `sum`, `min`, `max`, `avg`, `log2`, `exp` and `sqrt`, and constants `Pi` and `E`.
+PuduCalc includes the constants `Pi == math.Pi` and `E == math.E`, varargs functions:
+ - `max`
+ - `min`
+ - `avg`
+ - `sum`
+
+and three functions with a single parameter:
+ - `log2`
+ - `sqrt`
+ - `exp`
 
 ### Error reporting
-It reports syntax errors, unrecognized characters (lexical error), the usage of undefined functions or variables, calling functions with a wrong number of arguments, and attempting to redefine predefined functions or constants.
+It reports:
+- Syntax errors: unexpected end of line, unexpected tokens
+- Lexical errors: unrecognized characters
+- Naming errors: repeated arguments in function definitions, attempting to redefine predefined functions or constants
+- Type errors: wrong number of parameters in function calls
+- Not found errors: trying to use undefined functions or variables.
 
 ### Example session
 ```
