@@ -7,9 +7,6 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
   val lpar = Terminal[Token.LPar]("(")
   val rpar = Terminal[Token.RPar](")")
 
-  val lsqbr = Terminal[Token.LSqBr]("[")
-  val rsqbr = Terminal[Token.RSqBr]("]")
-
   val literal = Terminal[Token.Literal]
 
   val plus  = Terminal[Token.Plus]("+")
@@ -32,7 +29,8 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
   val assignment = NonTerminal[Assignment]("assgn")
   val expr       = NonTerminal[ExprTree]("expr")
   val exprSeq    = NonTerminal[ExprSeq]("exprSeq")
-  val idSeq      = NonTerminal[IdSeq]("idSeq")
+  val argsDef    = NonTerminal[IdSeq]("argsDef")
+  val idSeqTail  = NonTerminal[IdSeq]("idSeqTail")
   val fundef     = NonTerminal[FunDef]("fdef")
 
   override val eof = Terminal[Token.EOF]
@@ -57,10 +55,12 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
   (assignment ::= (id, assign, expr)) { (id, _, expr) => Assignment(id.name, expr) }
 
   /* Function defintion */
-  (fundef ::= (id, lsqbr, idSeq, rsqbr, assign, expr)) { (id,_,args,_,_,exp) => FunDef(id.name, args.seq, exp) }
+  (fundef ::= (id, argsDef, assign, expr)) { (id,args,_,exp) => FunDef(id.name, args.seq, exp) }
 
-  (idSeq ::= id) { id => IdSeq(Seq(id.name)) }
-  (idSeq ::= (id, comma, idSeq)) { (id,_,s) => IdSeq(id.name +: s.seq) }
+  (argsDef ::= (lpar, idSeqTail)) { _._2 }
+
+  (idSeqTail ::= (id, rpar)) { (id,_) => IdSeq(Seq(id.name)) }
+  (idSeqTail ::= (id, comma, idSeqTail)) { (id, _, tail) => IdSeq(id.name +: tail.seq) }
 
   /* Literal and var */
   (expr ::= literal) { l => ConstDouble(l.value) }

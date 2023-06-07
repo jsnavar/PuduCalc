@@ -4,7 +4,7 @@ import puducalc._
 import pudu.parser.generator._
 
 @main def main: Unit =
-  val parser = LR1ParserGenerator(ParserSpec).parser
+  val parser = SLRParserGenerator(ParserSpec).parser
   val strParser = parser.compose(Lexer.lexer)
 
   val ctx = Context.empty

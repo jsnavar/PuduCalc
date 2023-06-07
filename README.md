@@ -9,7 +9,7 @@ PuduCalc is a line oriented calculator operating with Doubles, where each line i
 ```
       stmt ::= assignment | expr | defun
 assignment ::= Id := expr
-     defun ::= Id [ idSeq ] := expr
+     defun ::= Id ( idSeq ) := expr
       expr ::= Literal | Id
       expr ::= ( expr )
       expr ::= expr + expr | expr - expr | expr * expr | expr / expr | expr ^ expr
@@ -57,7 +57,7 @@ Pi := 4
 Can not redefine predefined id: Pi
 x := 7
 Assigned 'x' := 7.0
-rms[x, y] := sqrt(x^2 + y^2)
+rms(x, y) := sqrt(x^2 + y^2)
 Defined function rms as (x, y) => FuncCall(sqrt,List(Addition(Pow(Var(x),ConstDouble(2.0)),Pow(Var(y),ConstDouble(2.0)))))
 rms(x, Pi) + 2
 Result(2) is 9.672653022331282

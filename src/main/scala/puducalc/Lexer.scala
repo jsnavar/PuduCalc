@@ -14,9 +14,6 @@ object Lexer extends Lexer[Token]:
   ","   { Token.Comma() }
   "/"   { Token.Slash() }
   ":="  { Token.Assign() }
-  "=>"  { Token.Arrow() }
-  "\\[" { Token.LSqBr() }
-  "\\]" { Token.RSqBr() }
 
   /* Literal doubles. Note that we define several regular expressions
    * for the same token, which may be useful in some cases */
