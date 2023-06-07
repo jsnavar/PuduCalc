@@ -38,6 +38,7 @@ class ParserTest extends munit.FunSuite {
 
   test("errors") {
     import pudu.parser._
+    import pudu.parser.ErrorMsg._
 
     assert(getError("1 := 2 ").isInstanceOf[SyntaxError[_]])
     assert(getError("2 + * 4").isInstanceOf[SyntaxError[_]])

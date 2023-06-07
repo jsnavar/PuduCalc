@@ -11,5 +11,5 @@ lazy val root = project
     scalacOptions ++= Seq("-Yretain-trees"),
     resolvers += Resolver.githubPackages("jsnavar"),
     libraryDependencies ++= Seq("org.scalameta" %% "munit" % "0.7.29" % Test,
-                                "pudu" %% "pudu" % "0.1.2")
+                                "pudu" %% "pudu" % "0.2.0")
   )
