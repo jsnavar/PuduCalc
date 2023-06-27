@@ -3,7 +3,7 @@ import puducalc._
 import pudu.parser.generator._
 
 class TreeAnalizerTest extends munit.FunSuite {
-  val strParser = SLRParserGenerator(ParserSpec).parser.compose(Lexer.lexer)
+  val strParser = LR1ParserGenerator(ParserSpec.grammar).parser.compose(Lexer.lexer)
 
   def analizeCtx(ctx: Context)(str: String): Set[ErrorMsg] =
     strParser(str).map {

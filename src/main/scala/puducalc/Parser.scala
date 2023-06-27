@@ -82,3 +82,4 @@ object ParserSpec extends LanguageSpec[CalcAST, Token]:
 
   /* function call */
   (expr ::= (id, lpar, exprSeq, rpar)) { (fn,_,args,_) => FuncCall(fn.name, args.seq) }
+  (expr ::= (id, argsDef)) { (fn, args) => FuncCall(fn.name, args.seq.map(Var(_))) }
